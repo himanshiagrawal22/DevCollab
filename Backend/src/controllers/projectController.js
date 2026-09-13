@@ -1,4 +1,5 @@
 const Project = require("../models/project");
+const ProjectMember = require("../models/projectMember");
 
 const createProject = async (req, res) => {
     const { name, description } = req.body;
@@ -7,6 +8,12 @@ const createProject = async (req, res) => {
         name,
         description,
         owner: req.userId
+    });
+
+    await ProjectMember.create({
+        project: project._id,
+        user: req.userId,
+        role: "OWNER"
     });
 
     return res.status(201).json({

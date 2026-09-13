@@ -3,6 +3,8 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
 const projectRoutes = require("./routes/projectRoutes");
+const projectMemberRoutes = require("./routes/projectMemberRoutes");
+const taskRoutes = require("./routes/taskRoutes");
 
 const app = express();
 
@@ -23,6 +25,9 @@ app.use(
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
+app.use("/api/projects", projectMemberRoutes);
+app.use("/api/projects", taskRoutes);
+
 
 app.get("/", (req, res) => {
   res.status(200).json({
