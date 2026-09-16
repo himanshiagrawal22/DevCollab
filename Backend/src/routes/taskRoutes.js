@@ -16,7 +16,11 @@ router.post("/:projectId/tasks", protect, createTask);
 
 router.get("/:projectId/tasks", protect, getProjectTasks);
 
-router.patch("/:projectId/tasks/:taskId", protect, updateTask);
+router.patch(
+    "/:projectId/tasks/:taskId",
+    protect,
+    updateTask
+);
 
 router.patch(
     "/:projectId/tasks/:taskId/status",
@@ -24,6 +28,10 @@ router.patch(
     updateTaskStatus
 );
 
-router.delete("/:projectId/tasks/:taskId", protect, deleteTask);
+router.delete(
+    "/:projectId/tasks/:taskId",
+    protect,
+    deleteTask
+);
 
 module.exports = router;

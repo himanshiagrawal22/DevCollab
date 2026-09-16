@@ -23,15 +23,42 @@ const createProject = async (req, res) => {
     });
 };
 
+// =========================
+// GET USER PROJECTS
+// =========================
+
 const getProjects = async (req, res) => {
-    const projects = await Project.find({
-        owner: req.userId
-    });
+  try {
+    // Find every project where current user
+    // has a membership
+    const memberships = await ProjectMember.find({
+      user: req.userId
+    })
+      .populate("project")
+      .sort({ createdAt: -1 });
+
+    // Remove memberships whose project
+    // may no longer exist
+    const projects = memberships
+      .filter((membership) => membership.project)
+      .map((membership) => ({
+        ...membership.project.toObject(),
+        role: membership.role
+      }));
 
     return res.status(200).json({
-        success: true,
-        projects
+      success: true,
+      projects
     });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Something went wrong while fetching projects"
+    });
+  }
 };
 
 
