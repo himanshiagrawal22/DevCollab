@@ -10,6 +10,12 @@ const ProjectMember = require("./models/projectMember");
 
 const PORT = process.env.PORT || 5000;
 
+// Production me Render CLIENT_URL use karega.
+// Local development me localhost fallback rahega.
+const CLIENT_URL =
+  process.env.CLIENT_URL ||
+  "http://localhost:5173";
+
 // =========================
 // HTTP SERVER
 // =========================
@@ -22,7 +28,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: CLIENT_URL,
     credentials: true
   }
 });
@@ -37,8 +43,6 @@ app.set("io", io);
 
 io.use((socket, next) => {
   try {
-    // Browser se Socket.IO handshake ke
-    // saath cookies aati hain.
     const cookieHeader =
       socket.handshake.headers.cookie;
 
@@ -47,9 +51,6 @@ io.use((socket, next) => {
         new Error("Authentication required")
       );
     }
-
-    // Cookie header example:
-    // token=abc123; otherCookie=value
 
     const cookies = {};
 
@@ -73,14 +74,11 @@ io.use((socket, next) => {
       );
     }
 
-    // JWT verify
     const decoded = jwt.verify(
       token,
       process.env.JWT_SECRET
     );
 
-    // Same idea as req.userId
-    // in REST auth middleware
     socket.userId = decoded.userId;
 
     next();
@@ -116,9 +114,6 @@ io.on("connection", (socket) => {
     "joinProject",
     async (projectId) => {
       try {
-        // Check whether logged-in user
-        // actually belongs to this project.
-
         const membership =
           await ProjectMember.findOne({
             project: projectId,
@@ -143,7 +138,6 @@ Project ${projectId}`
           return;
         }
 
-        // Membership verified
         socket.join(projectId);
 
         console.log(
