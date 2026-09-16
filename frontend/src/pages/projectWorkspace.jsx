@@ -213,10 +213,7 @@ function ProjectWorkspace() {
 
       fetchNotifications();
     } catch (error) {
-      alert(
-        error.response?.data?.message ||
-        "Failed to update notification"
-      );
+      alert(error.response?.data?.message || "Failed to update notification");
     }
   };
 
@@ -230,10 +227,7 @@ function ProjectWorkspace() {
 
       fetchNotifications();
     } catch (error) {
-      alert(
-        error.response?.data?.message ||
-        "Failed to update notifications"
-      );
+      alert(error.response?.data?.message || "Failed to update notifications");
     }
   };
 
@@ -298,8 +292,8 @@ function ProjectWorkspace() {
     // NOTIFICATION EVENT
 
     const handleNotificationCreated = () => {
-      // Event is broadcast to project room,
-      // but API returns only current user's notifications.
+      // The event is broadcast to the project room, but this API only
+      // returns notifications belonging to the currently logged-in user.
       fetchNotifications();
     };
 
@@ -750,7 +744,8 @@ function ProjectWorkspace() {
       );
     }
   };
-    // =========================
+
+  // =========================
   // CURRENT USER PERMISSIONS
   // =========================
 
@@ -768,20 +763,6 @@ function ProjectWorkspace() {
   const canManageMembers =
     currentRole === "OWNER" ||
     currentRole === "ADMIN";
-
-  // OWNER, ADMIN and MEMBER can update task status.
-  // VIEWER is read-only.
-  const canUpdateTaskStatus =
-    currentRole === "OWNER" ||
-    currentRole === "ADMIN" ||
-    currentRole === "MEMBER";
-
-  // OWNER, ADMIN and MEMBER can add comments.
-  // VIEWER can only read comments.
-  const canAddComments =
-    currentRole === "OWNER" ||
-    currentRole === "ADMIN" ||
-    currentRole === "MEMBER";
 
   const canChangeRoles =
     currentRole === "OWNER";
@@ -803,22 +784,6 @@ function ProjectWorkspace() {
     }
 
     return false;
-  };
-
-  const canDeleteComment = (comment) => {
-    // VIEWER is completely read-only.
-    if (currentRole === "VIEWER") {
-      return false;
-    }
-
-    const isCommentAuthor =
-      comment.user?._id === currentUser?._id;
-
-    return (
-      isCommentAuthor ||
-      currentRole === "OWNER" ||
-      currentRole === "ADMIN"
-    );
   };
 
   // =========================
@@ -848,10 +813,7 @@ function ProjectWorkspace() {
 
     if (isEditing) {
       return (
-        <div
-          className="task-card task-edit-card"
-          key={task._id}
-        >
+        <div className="task-card task-edit-card" key={task._id}>
           <h4>Edit Task</h4>
 
           <input
@@ -929,24 +891,14 @@ function ProjectWorkspace() {
     }
 
     return (
-      <div
-        className="task-card"
-        key={task._id}
-      >
-        <div className="task-card-header">
-          <h4>{task.title}</h4>
-
-          <span
-            className={`priority-badge priority-${task.priority?.toLowerCase()}`}
-          >
-            {task.priority}
-          </span>
-        </div>
+      <div className="task-card" key={task._id}>
+        <div className="task-card-header"><h4>{task.title}</h4><span className={`priority-badge priority-${task.priority?.toLowerCase()}`}>{task.priority}</span></div>
 
         <p>
           {task.description ||
             "No description"}
         </p>
+
 
         <p>
           Assigned to:{" "}
@@ -961,8 +913,6 @@ function ProjectWorkspace() {
           </p>
         )}
 
-        {/* EDIT TASK - OWNER / ADMIN */}
-
         {canManageTasks && (
           <button
             onClick={() =>
@@ -973,67 +923,57 @@ function ProjectWorkspace() {
           </button>
         )}
 
-        {/* ========================= */}
-        {/* TASK STATUS CONTROLS */}
-        {/* VIEWER CANNOT SEE THESE */}
-        {/* ========================= */}
+        {column === "TODO" && (
+          <button
+            onClick={() =>
+              updateTaskStatus(
+                task._id,
+                "IN_PROGRESS"
+              )
+            }
+          >
+            Start Task
+          </button>
+        )}
 
-        {canUpdateTaskStatus &&
-          column === "TODO" && (
+        {column === "IN_PROGRESS" && (
+          <>
             <button
               onClick={() =>
                 updateTaskStatus(
                   task._id,
-                  "IN_PROGRESS"
+                  "DONE"
                 )
               }
             >
-              Start Task
+              Mark Done
             </button>
-          )}
 
-        {canUpdateTaskStatus &&
-          column === "IN_PROGRESS" && (
-            <>
-              <button
-                onClick={() =>
-                  updateTaskStatus(
-                    task._id,
-                    "DONE"
-                  )
-                }
-              >
-                Mark Done
-              </button>
-
-              <button
-                onClick={() =>
-                  updateTaskStatus(
-                    task._id,
-                    "TODO"
-                  )
-                }
-              >
-                Move Back
-              </button>
-            </>
-          )}
-
-        {canUpdateTaskStatus &&
-          column === "DONE" && (
             <button
               onClick={() =>
                 updateTaskStatus(
                   task._id,
-                  "IN_PROGRESS"
+                  "TODO"
                 )
               }
             >
-              Reopen Task
+              Move Back
             </button>
-          )}
+          </>
+        )}
 
-        {/* DELETE TASK - OWNER / ADMIN */}
+        {column === "DONE" && (
+          <button
+            onClick={() =>
+              updateTaskStatus(
+                task._id,
+                "IN_PROGRESS"
+              )
+            }
+          >
+            Reopen Task
+          </button>
+        )}
 
         {canManageTasks && (
           <button
@@ -1044,11 +984,6 @@ function ProjectWorkspace() {
             Delete Task
           </button>
         )}
-
-        {/* ========================= */}
-        {/* COMMENTS */}
-        {/* VIEWER CAN OPEN / READ */}
-        {/* ========================= */}
 
         <button
           onClick={() =>
@@ -1065,7 +1000,7 @@ function ProjectWorkspace() {
             <h5>Comments</h5>
 
             {!comments[task._id] ||
-            comments[task._id].length === 0 ? (
+              comments[task._id].length === 0 ? (
               <p>No comments yet</p>
             ) : (
               comments[task._id].map(
@@ -1079,54 +1014,45 @@ function ProjectWorkspace() {
                       : {comment.text}
                     </p>
 
-                    {canDeleteComment(comment) && (
-                      <button
-                        onClick={() =>
-                          handleDeleteComment(
-                            task._id,
-                            comment._id
-                          )
-                        }
-                      >
-                        Delete Comment
-                      </button>
-                    )}
+                    <button
+                      onClick={() =>
+                        handleDeleteComment(
+                          task._id,
+                          comment._id
+                        )
+                      }
+                    >
+                      Delete Comment
+                    </button>
                   </div>
                 )
               )
             )}
 
-            {/* VIEWER CANNOT WRITE COMMENTS */}
+            <input
+              type="text"
+              placeholder="Write a comment..."
+              value={
+                commentText[task._id] || ""
+              }
+              onChange={(e) =>
+                setCommentText(
+                  (previous) => ({
+                    ...previous,
+                    [task._id]:
+                      e.target.value
+                  })
+                )
+              }
+            />
 
-            {canAddComments && (
-              <>
-                <input
-                  type="text"
-                  placeholder="Write a comment..."
-                  value={
-                    commentText[task._id] ||
-                    ""
-                  }
-                  onChange={(e) =>
-                    setCommentText(
-                      (previous) => ({
-                        ...previous,
-                        [task._id]:
-                          e.target.value
-                      })
-                    )
-                  }
-                />
-
-                <button
-                  onClick={() =>
-                    handleAddComment(task._id)
-                  }
-                >
-                  Add Comment
-                </button>
-              </>
-            )}
+            <button
+              onClick={() =>
+                handleAddComment(task._id)
+              }
+            >
+              Add Comment
+            </button>
           </div>
         )}
 
@@ -1149,758 +1075,174 @@ function ProjectWorkspace() {
 
   return (
     <div className="workspace-page">
-
-      {/* ========================= */}
-      {/* NAVBAR */}
-      {/* ========================= */}
-
       <header className="app-navbar">
         <div className="brand">
-          <div className="brand-logo">
-            D
-          </div>
-
-          <div>
-            <h2>DevCollab</h2>
-            <span>
-              Developer workspace
-            </span>
-          </div>
+          <div className="brand-logo">D</div>
+          <div><h2>DevCollab</h2><span>Developer workspace</span></div>
         </div>
 
         <div className="navbar-actions">
-          <button
-            className="nav-icon-btn"
-            onClick={() =>
-              setShowNotifications(
-                !showNotifications
-              )
-            }
-          >
-            🔔
-            {unreadCount > 0 && (
-              <span className="notification-dot">
-                {unreadCount}
-              </span>
-            )}
+          <button className="nav-icon-btn" onClick={() => setShowNotifications(!showNotifications)}>
+            🔔{unreadCount > 0 && <span className="notification-dot">{unreadCount}</span>}
           </button>
-
           <ThemeToggle />
-
-          <button
-            className="secondary-btn"
-            onClick={() =>
-              navigate("/dashboard")
-            }
-          >
-            ← Dashboard
-          </button>
+          <button className="secondary-btn" onClick={() => navigate("/dashboard")}>← Dashboard</button>
         </div>
       </header>
 
       <main className="workspace-content">
-
-        {/* ========================= */}
-        {/* PROJECT OVERVIEW */}
-        {/* ========================= */}
-
         <section className="project-overview">
           <div>
-            <p className="project-kicker">
-              <span className="live-dot"></span>
-              REAL-TIME PROJECT WORKSPACE
-            </p>
-
-            <h1>
-              Project Workspace
-            </h1>
-
-            <p>
-              Plan work, collaborate with
-              your team and keep every
-              update in one place.
-            </p>
-
+            <p className="project-kicker"><span className="live-dot"></span>REAL-TIME PROJECT WORKSPACE</p>
+            <h1>Project Workspace</h1>
+            <p>Plan work, collaborate with your team and keep every update in one place.</p>
             <div className="project-stats">
-              <span>
-                <strong>
-                  {tasks.length}
-                </strong>{" "}
-                Tasks
-              </span>
-
-              <span>
-                <strong>
-                  {members.length}
-                </strong>{" "}
-                Members
-              </span>
-
-              {currentRole && (
-                <span className="role-pill">
-                  {currentRole}
-                </span>
-              )}
+              <span><strong>{tasks.length}</strong> Tasks</span>
+              <span><strong>{members.length}</strong> Members</span>
+              {currentRole && <span className="role-pill">{currentRole}</span>}
             </div>
           </div>
 
           <div className="overview-actions">
-            <button
-              className="secondary-btn"
-              onClick={() =>
-                setShowTeam(!showTeam)
-              }
-            >
-              👥 Team
-            </button>
-
-            <button
-              className="secondary-btn"
-              onClick={() =>
-                setShowActivities(
-                  !showActivities
-                )
-              }
-            >
-              ◷ Activity
-            </button>
-
+            <button className="secondary-btn" onClick={() => setShowTeam(!showTeam)}>👥 Team</button>
+            <button className="secondary-btn" onClick={() => setShowActivities(!showActivities)}>◷ Activity</button>
             {canManageTasks && (
-              <button
-                className="primary-btn"
-                onClick={() =>
-                  setShowCreateTask(true)
-                }
-              >
-                + New Task
-              </button>
+              <button className="primary-btn" onClick={() => setShowCreateTask(true)}>+ New Task</button>
             )}
           </div>
         </section>
 
-        {/* ========================= */}
-        {/* NOTIFICATIONS */}
-        {/* ========================= */}
-
         {showNotifications && (
           <section className="floating-panel">
             <div className="panel-heading">
-              <div>
-                <p className="eyebrow">
-                  INBOX
-                </p>
-
-                <h3>
-                  Notifications
-                </h3>
-              </div>
-
+              <div><p className="eyebrow">INBOX</p><h3>Notifications</h3></div>
               <div className="panel-heading-actions">
-                {unreadCount > 0 && (
-                  <button
-                    className="text-btn"
-                    onClick={
-                      handleMarkAllNotificationsAsRead
-                    }
-                  >
-                    Mark all read
-                  </button>
-                )}
-
-                <button
-                  className="icon-close"
-                  onClick={() =>
-                    setShowNotifications(
-                      false
-                    )
-                  }
-                >
-                  ×
-                </button>
+                {unreadCount > 0 && <button className="text-btn" onClick={handleMarkAllNotificationsAsRead}>Mark all read</button>}
+                <button className="icon-close" onClick={() => setShowNotifications(false)}>×</button>
               </div>
             </div>
-
-            {notifications.length === 0 ? (
-              <div className="empty-state">
-                You're all caught up.
-              </div>
-            ) : (
+            {notifications.length === 0 ? <div className="empty-state">You're all caught up.</div> : (
               <div className="feed-list">
-                {notifications.map(
-                  (notification) => (
-                    <div
-                      className={`feed-item ${
-                        !notification.isRead
-                          ? "unread"
-                          : ""
-                      }`}
-                      key={notification._id}
-                    >
-                      <div className="feed-icon">
-                        🔔
-                      </div>
-
-                      <div className="feed-content">
-                        <p>
-                          {notification.message}
-                        </p>
-
-                        <small>
-                          {notification.sender
-                            ?.name
-                            ? `From ${notification.sender.name}`
-                            : "Project update"}
-                        </small>
-                      </div>
-
-                      {!notification.isRead && (
-                        <button
-                          className="text-btn"
-                          onClick={() =>
-                            handleMarkNotificationAsRead(
-                              notification._id
-                            )
-                          }
-                        >
-                          Read
-                        </button>
-                      )}
+                {notifications.map((notification) => (
+                  <div className={`feed-item ${!notification.isRead ? "unread" : ""}`} key={notification._id}>
+                    <div className="feed-icon">🔔</div>
+                    <div className="feed-content">
+                      <p>{notification.message}</p>
+                      <small>{notification.sender?.name ? `From ${notification.sender.name}` : "Project update"}</small>
                     </div>
-                  )
-                )}
+                    {!notification.isRead && <button className="text-btn" onClick={() => handleMarkNotificationAsRead(notification._id)}>Read</button>}
+                  </div>
+                ))}
               </div>
             )}
           </section>
         )}
-
-        {/* ========================= */}
-        {/* ACTIVITY */}
-        {/* ========================= */}
 
         {showActivities && (
           <section className="floating-panel">
             <div className="panel-heading">
-              <div>
-                <p className="eyebrow">
-                  PROJECT FEED
-                </p>
-
-                <h3>
-                  Recent Activity
-                </h3>
-              </div>
-
-              <button
-                className="icon-close"
-                onClick={() =>
-                  setShowActivities(false)
-                }
-              >
-                ×
-              </button>
+              <div><p className="eyebrow">PROJECT FEED</p><h3>Recent Activity</h3></div>
+              <button className="icon-close" onClick={() => setShowActivities(false)}>×</button>
             </div>
-
-            {activities.length === 0 ? (
-              <div className="empty-state">
-                No activity yet.
-              </div>
-            ) : (
+            {activities.length === 0 ? <div className="empty-state">No activity yet.</div> : (
               <div className="activity-grid">
-                {activities
-                  .slice(0, 8)
-                  .map((activity) => (
-                    <div
-                      className="activity-item"
-                      key={activity._id}
-                    >
-                      <div className="avatar">
-                        {(
-                          activity.user?.name ||
-                          "U"
-                        )
-                          .charAt(0)
-                          .toUpperCase()}
-                      </div>
-
-                      <div>
-                        <p>
-                          <strong>
-                            {activity.user?.name ||
-                              "User"}
-                          </strong>{" "}
-                          {activity.message}
-                        </p>
-
-                        <small>
-                          {new Date(
-                            activity.createdAt
-                          ).toLocaleString()}
-                        </small>
-                      </div>
-                    </div>
-                  ))}
+                {activities.slice(0, 8).map((activity) => (
+                  <div className="activity-item" key={activity._id}>
+                    <div className="avatar">{(activity.user?.name || "U").charAt(0).toUpperCase()}</div>
+                    <div><p><strong>{activity.user?.name || "User"}</strong>{" "}{activity.message}</p><small>{new Date(activity.createdAt).toLocaleString()}</small></div>
+                  </div>
+                ))}
               </div>
             )}
           </section>
         )}
 
-        {/* ========================= */}
-        {/* TEAM */}
-        {/* ========================= */}
-
         {showTeam && (
           <section className="floating-panel">
             <div className="panel-heading">
-              <div>
-                <p className="eyebrow">
-                  TEAM
-                </p>
-
-                <h3>
-                  Project Members{" "}
-                  <span className="count-pill">
-                    {members.length}
-                  </span>
-                </h3>
-              </div>
-
-              <button
-                className="icon-close"
-                onClick={() =>
-                  setShowTeam(false)
-                }
-              >
-                ×
-              </button>
+              <div><p className="eyebrow">TEAM</p><h3>Project Members <span className="count-pill">{members.length}</span></h3></div>
+              <button className="icon-close" onClick={() => setShowTeam(false)}>×</button>
             </div>
-
             <div className="member-grid">
               {members.map((member) => (
-                <div
-                  className="member-card"
-                  key={member._id}
-                >
+                <div className="member-card" key={member._id}>
                   <div className="member-main">
-                    <div className="avatar large">
-                      {(
-                        member.user?.name ||
-                        "U"
-                      )
-                        .charAt(0)
-                        .toUpperCase()}
-                    </div>
-
-                    <div>
-                      <strong>
-                        {member.user?.name}
-                      </strong>
-
-                      <span>
-                        {member.user?.email}
-                      </span>
-                    </div>
+                    <div className="avatar large">{(member.user?.name || "U").charAt(0).toUpperCase()}</div>
+                    <div><strong>{member.user?.name}</strong><span>{member.user?.email}</span></div>
                   </div>
-
                   <div className="member-actions">
-                    <span className="member-role">
-                      {member.role}
-                    </span>
-
-                    {member.role !== "OWNER" &&
-                      canChangeRoles && (
-                        <>
-                          <select
-                            value={
-                              roleChanges[
-                                member._id
-                              ] ||
-                              member.role
-                            }
-                            onChange={(e) =>
-                              setRoleChanges({
-                                ...roleChanges,
-                                [member._id]:
-                                  e.target.value
-                              })
-                            }
-                          >
-                            <option value="ADMIN">
-                              Admin
-                            </option>
-
-                            <option value="MEMBER">
-                              Member
-                            </option>
-
-                            <option value="VIEWER">
-                              Viewer
-                            </option>
-                          </select>
-
-                          <button
-                            className="small-btn"
-                            onClick={() =>
-                              handleUpdateRole(
-                                member._id
-                              )
-                            }
-                          >
-                            Update
-                          </button>
-                        </>
-                      )}
-
-                    {canRemoveMember(member) && (
-                      <button
-                        className="danger-ghost"
-                        onClick={() =>
-                          handleRemoveMember(
-                            member._id
-                          )
-                        }
-                      >
-                        Remove
-                      </button>
+                    <span className="member-role">{member.role}</span>
+                    {member.role !== "OWNER" && canChangeRoles && (
+                      <>
+                        <select value={roleChanges[member._id] || member.role} onChange={(e) => setRoleChanges({...roleChanges,[member._id]:e.target.value})}>
+                          <option value="ADMIN">Admin</option><option value="MEMBER">Member</option><option value="VIEWER">Viewer</option>
+                        </select>
+                        <button className="small-btn" onClick={() => handleUpdateRole(member._id)}>Update</button>
+                      </>
                     )}
+                    {canRemoveMember(member) && <button className="danger-ghost" onClick={() => handleRemoveMember(member._id)}>Remove</button>}
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* ADD TEAMMATE */}
-
             {canManageMembers && (
-              <form
-                className="add-member-form"
-                onSubmit={handleAddMember}
-              >
-                <div>
-                  <strong>
-                    Add teammate
-                  </strong>
-
-                  <span>
-                    Invite a registered user.
-                  </span>
-                </div>
-
-                <input
-                  type="email"
-                  placeholder="Teammate email"
-                  value={memberEmail}
-                  onChange={(e) =>
-                    setMemberEmail(
-                      e.target.value
-                    )
-                  }
-                  required
-                />
-
-                <select
-                  value={memberRole}
-                  onChange={(e) =>
-                    setMemberRole(
-                      e.target.value
-                    )
-                  }
-                >
-                  <option value="MEMBER">
-                    Member
-                  </option>
-
-                  {currentRole === "OWNER" && (
-                    <option value="ADMIN">
-                      Admin
-                    </option>
-                  )}
-
-                  <option value="VIEWER">
-                    Viewer
-                  </option>
+              <form className="add-member-form" onSubmit={handleAddMember}>
+                <div><strong>Add teammate</strong><span>Invite a registered user.</span></div>
+                <input type="email" placeholder="Teammate email" value={memberEmail} onChange={(e) => setMemberEmail(e.target.value)} required />
+                <select value={memberRole} onChange={(e) => setMemberRole(e.target.value)}>
+                  <option value="MEMBER">Member</option><option value="ADMIN">Admin</option><option value="VIEWER">Viewer</option>
                 </select>
-
-                <button
-                  className="primary-btn"
-                  type="submit"
-                >
-                  Add
-                </button>
+                <button className="primary-btn" type="submit">Add</button>
               </form>
             )}
           </section>
         )}
 
-        {/* ========================= */}
-        {/* KANBAN BOARD */}
-        {/* ========================= */}
-
         <section className="board-section">
           <div className="board-header">
-            <div>
-              <p className="eyebrow">
-                KANBAN BOARD
-              </p>
-
-              <h2>
-                Your Tasks
-              </h2>
-            </div>
-
-            <div className="board-summary">
-              <span>
-                {todoTasks.length} To do
-              </span>
-
-              <span>
-                {inProgressTasks.length}{" "}
-                In progress
-              </span>
-
-              <span>
-                {doneTasks.length} Done
-              </span>
-            </div>
+            <div><p className="eyebrow">KANBAN BOARD</p><h2>Your Tasks</h2></div>
+            <div className="board-summary"><span>{todoTasks.length} To do</span><span>{inProgressTasks.length} In progress</span><span>{doneTasks.length} Done</span></div>
           </div>
 
           <div className="kanban-board">
             {[
-              [
-                "TODO",
-                "TO DO",
-                todoTasks,
-                "todo-dot",
-                "No tasks here"
-              ],
-              [
-                "IN_PROGRESS",
-                "IN PROGRESS",
-                inProgressTasks,
-                "progress-dot",
-                "Ready for work"
-              ],
-              [
-                "DONE",
-                "DONE",
-                doneTasks,
-                "done-dot",
-                "Completed work appears here"
-              ]
-            ].map(
-              ([
-                status,
-                label,
-                list,
-                dot,
-                empty
-              ]) => (
-                <div
-                  className="kanban-column"
-                  key={status}
-                >
-                  <div className="kanban-column-title">
-                    <div>
-                      <span
-                        className={`status-dot ${dot}`}
-                      ></span>
-
-                      <h3>
-                        {label}
-                      </h3>
-                    </div>
-
-                    <span>
-                      {list.length}
-                    </span>
-                  </div>
-
-                  <div className="column-tasks">
-                    {list.length === 0 ? (
-                      <div className="column-empty">
-                        <span>◇</span>
-                        <p>{empty}</p>
-                      </div>
-                    ) : (
-                      list.map((task) =>
-                        renderTask(
-                          task,
-                          status
-                        )
-                      )
-                    )}
-                  </div>
+              ["TODO", "TO DO", todoTasks, "todo-dot", "No tasks here"],
+              ["IN_PROGRESS", "IN PROGRESS", inProgressTasks, "progress-dot", "Ready for work"],
+              ["DONE", "DONE", doneTasks, "done-dot", "Completed work appears here"]
+            ].map(([status, label, list, dot, empty]) => (
+              <div className="kanban-column" key={status}>
+                <div className="kanban-column-title">
+                  <div><span className={`status-dot ${dot}`}></span><h3>{label}</h3></div><span>{list.length}</span>
                 </div>
-              )
-            )}
+                <div className="column-tasks">
+                  {list.length === 0 ? <div className="column-empty"><span>◇</span><p>{empty}</p></div> : list.map((task) => renderTask(task, status))}
+                </div>
+              </div>
+            ))}
           </div>
         </section>
       </main>
 
-      {/* ========================= */}
-      {/* CREATE TASK MODAL */}
-      {/* ========================= */}
-
-      {showCreateTask &&
-        canManageTasks && (
-          <div
-            className="modal-backdrop"
-            onMouseDown={() =>
-              setShowCreateTask(false)
-            }
-          >
-            <section
-              className="task-modal"
-              onMouseDown={(e) =>
-                e.stopPropagation()
-              }
-            >
-              <div className="panel-heading">
-                <div>
-                  <p className="eyebrow">
-                    NEW WORK ITEM
-                  </p>
-
-                  <h2>
-                    Create a task
-                  </h2>
-                </div>
-
-                <button
-                  className="icon-close"
-                  onClick={() =>
-                    setShowCreateTask(
-                      false
-                    )
-                  }
-                >
-                  ×
-                </button>
+      {showCreateTask && canManageTasks && (
+        <div className="modal-backdrop" onMouseDown={() => setShowCreateTask(false)}>
+          <section className="task-modal" onMouseDown={(e) => e.stopPropagation()}>
+            <div className="panel-heading">
+              <div><p className="eyebrow">NEW WORK ITEM</p><h2>Create a task</h2></div>
+              <button className="icon-close" onClick={() => setShowCreateTask(false)}>×</button>
+            </div>
+            <form className="task-modal-form" onSubmit={handleCreateTask}>
+              <label>Task title<input type="text" placeholder="e.g. Build dashboard UI" value={title} onChange={(e) => setTitle(e.target.value)} required autoFocus /></label>
+              <label>Description<textarea placeholder="What needs to be done?" value={description} onChange={(e) => setDescription(e.target.value)} rows="4" /></label>
+              <div className="form-row">
+                <label>Priority<select value={priority} onChange={(e) => setPriority(e.target.value)}><option value="LOW">Low</option><option value="MEDIUM">Medium</option><option value="HIGH">High</option></select></label>
+                <label>Assignee<select value={assignedTo} onChange={(e) => setAssignedTo(e.target.value)}><option value="">Unassigned</option>{members.map((member) => <option key={member._id} value={member.user?._id}>{member.user?.name}</option>)}</select></label>
               </div>
-
-              <form
-                className="task-modal-form"
-                onSubmit={
-                  handleCreateTask
-                }
-              >
-                <label>
-                  Task title
-
-                  <input
-                    type="text"
-                    placeholder="e.g. Build dashboard UI"
-                    value={title}
-                    onChange={(e) =>
-                      setTitle(
-                        e.target.value
-                      )
-                    }
-                    required
-                    autoFocus
-                  />
-                </label>
-
-                <label>
-                  Description
-
-                  <textarea
-                    placeholder="What needs to be done?"
-                    value={description}
-                    onChange={(e) =>
-                      setDescription(
-                        e.target.value
-                      )
-                    }
-                    rows="4"
-                  />
-                </label>
-
-                <div className="form-row">
-                  <label>
-                    Priority
-
-                    <select
-                      value={priority}
-                      onChange={(e) =>
-                        setPriority(
-                          e.target.value
-                        )
-                      }
-                    >
-                      <option value="LOW">
-                        Low
-                      </option>
-
-                      <option value="MEDIUM">
-                        Medium
-                      </option>
-
-                      <option value="HIGH">
-                        High
-                      </option>
-                    </select>
-                  </label>
-
-                  <label>
-                    Assignee
-
-                    <select
-                      value={assignedTo}
-                      onChange={(e) =>
-                        setAssignedTo(
-                          e.target.value
-                        )
-                      }
-                    >
-                      <option value="">
-                        Unassigned
-                      </option>
-
-                      {members.map(
-                        (member) => (
-                          <option
-                            key={
-                              member._id
-                            }
-                            value={
-                              member
-                                .user?._id
-                            }
-                          >
-                            {
-                              member
-                                .user?.name
-                            }
-                          </option>
-                        )
-                      )}
-                    </select>
-                  </label>
-                </div>
-
-                <div className="modal-actions">
-                  <button
-                    type="button"
-                    className="secondary-btn"
-                    onClick={() =>
-                      setShowCreateTask(
-                        false
-                      )
-                    }
-                  >
-                    Cancel
-                  </button>
-
-                  <button
-                    type="submit"
-                    className="primary-btn"
-                  >
-                    Create Task
-                  </button>
-                </div>
-              </form>
-            </section>
-          </div>
-        )}
+              <div className="modal-actions"><button type="button" className="secondary-btn" onClick={() => setShowCreateTask(false)}>Cancel</button><button type="submit" className="primary-btn">Create Task</button></div>
+            </form>
+          </section>
+        </div>
+      )}
     </div>
   );
 }

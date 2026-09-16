@@ -1,7 +1,8 @@
 import { io } from "socket.io-client";
+import API_URL from "./api";
 
-const socket = io("http://localhost:5000", {
-  withCredentials: true
+const socket = io(API_URL, {
+  withCredentials: true,
 });
 
 export default socket;

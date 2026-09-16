@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import API_URL from "../services/api";
 
 function Register() {
   const [name, setName] = useState("");
@@ -14,7 +15,7 @@ function Register() {
 
     try {
       await axios.post(
-        "http://localhost:5000/api/auth/register",
+        `${API_URL}/api/auth/register`,
         {
           name,
           email,
@@ -24,7 +25,10 @@ function Register() {
 
       navigate("/");
     } catch (error) {
-      alert(error.response?.data?.message || "Registration failed");
+      alert(
+        error.response?.data?.message ||
+          "Registration failed"
+      );
     }
   };
 
@@ -45,7 +49,9 @@ function Register() {
           </div>
 
           <div className="auth-brand-content">
-            <p className="eyebrow">WORK BETTER TOGETHER</p>
+            <p className="eyebrow">
+              WORK BETTER TOGETHER
+            </p>
 
             <h1>
               Turn ideas into
@@ -54,27 +60,46 @@ function Register() {
             </h1>
 
             <p>
-              Create workspaces, manage tasks and collaborate with developers
-              in real time.
+              Create workspaces, manage tasks and
+              collaborate with developers in real time.
             </p>
           </div>
 
           <div className="auth-features">
-            <span>✓ Create collaborative projects</span>
-            <span>✓ Assign and track tasks</span>
-            <span>✓ Stay updated in real time</span>
+            <span>
+              ✓ Create collaborative projects
+            </span>
+
+            <span>
+              ✓ Assign and track tasks
+            </span>
+
+            <span>
+              ✓ Stay updated in real time
+            </span>
           </div>
         </section>
 
         <section className="auth-form-panel">
           <div className="auth-form-wrapper">
             <div className="auth-form-heading">
-              <p className="eyebrow">GET STARTED</p>
-              <h2>Create your account</h2>
-              <p>Start collaborating with your team.</p>
+              <p className="eyebrow">
+                GET STARTED
+              </p>
+
+              <h2>
+                Create your account
+              </h2>
+
+              <p>
+                Start collaborating with your team.
+              </p>
             </div>
 
-            <form className="auth-form" onSubmit={handleRegister}>
+            <form
+              className="auth-form"
+              onSubmit={handleRegister}
+            >
               <div className="form-field">
                 <label>Full name</label>
 
@@ -82,7 +107,9 @@ function Register() {
                   type="text"
                   placeholder="Your name"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) =>
+                    setName(e.target.value)
+                  }
                   required
                 />
               </div>
@@ -94,7 +121,9 @@ function Register() {
                   type="email"
                   placeholder="you@example.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) =>
+                    setEmail(e.target.value)
+                  }
                   required
                 />
               </div>
@@ -106,13 +135,18 @@ function Register() {
                   type="password"
                   placeholder="Minimum 6 characters"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) =>
+                    setPassword(e.target.value)
+                  }
                   required
                   minLength={6}
                 />
               </div>
 
-              <button className="auth-submit-btn" type="submit">
+              <button
+                className="auth-submit-btn"
+                type="submit"
+              >
                 Create Account
                 <span>→</span>
               </button>
@@ -120,7 +154,9 @@ function Register() {
 
             <p className="auth-switch">
               Already have an account?{" "}
-              <Link to="/">Sign in</Link>
+              <Link to="/">
+                Sign in
+              </Link>
             </p>
           </div>
         </section>

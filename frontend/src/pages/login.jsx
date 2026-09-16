@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import API_URL from "../services/api";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -13,7 +14,7 @@ function Login() {
 
     try {
       await axios.post(
-        "http://localhost:5000/api/auth/login",
+        `${API_URL}/api/auth/login`,
         {
           email,
           password,
@@ -25,7 +26,10 @@ function Login() {
 
       navigate("/dashboard");
     } catch (error) {
-      alert(error.response?.data?.message || "Login failed");
+      alert(
+        error.response?.data?.message ||
+          "Login failed"
+      );
     }
   };
 
@@ -46,7 +50,9 @@ function Login() {
           </div>
 
           <div className="auth-brand-content">
-            <p className="eyebrow">BUILD • COLLABORATE • SHIP</p>
+            <p className="eyebrow">
+              BUILD • COLLABORATE • SHIP
+            </p>
 
             <h1>
               Your projects.
@@ -57,52 +63,85 @@ function Login() {
             </h1>
 
             <p>
-              Organize tasks, collaborate with your team and keep every
-              project update in one place.
+              Organize tasks, collaborate with your
+              team and keep every project update in
+              one place.
             </p>
           </div>
 
           <div className="auth-features">
-            <span>✓ Real-time collaboration</span>
-            <span>✓ Kanban task management</span>
-            <span>✓ Team roles & activity</span>
+            <span>
+              ✓ Real-time collaboration
+            </span>
+
+            <span>
+              ✓ Kanban task management
+            </span>
+
+            <span>
+              ✓ Team roles & activity
+            </span>
           </div>
         </section>
 
         <section className="auth-form-panel">
           <div className="auth-form-wrapper">
             <div className="auth-form-heading">
-              <p className="eyebrow">WELCOME BACK</p>
-              <h2>Sign in to DevCollab</h2>
-              <p>Continue working with your team.</p>
+              <p className="eyebrow">
+                WELCOME BACK
+              </p>
+
+              <h2>
+                Sign in to DevCollab
+              </h2>
+
+              <p>
+                Continue working with your team.
+              </p>
             </div>
 
-            <form className="auth-form" onSubmit={handleLogin}>
+            <form
+              className="auth-form"
+              onSubmit={handleLogin}
+            >
               <div className="form-field">
-                <label>Email address</label>
+                <label>
+                  Email address
+                </label>
 
                 <input
                   type="email"
                   placeholder="you@example.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) =>
+                    setEmail(e.target.value)
+                  }
                   required
                 />
               </div>
 
               <div className="form-field">
-                <label>Password</label>
+                <label>
+                  Password
+                </label>
 
                 <input
                   type="password"
                   placeholder="Enter your password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) =>
+                    setPassword(
+                      e.target.value
+                    )
+                  }
                   required
                 />
               </div>
 
-              <button className="auth-submit-btn" type="submit">
+              <button
+                className="auth-submit-btn"
+                type="submit"
+              >
                 Sign In
                 <span>→</span>
               </button>
@@ -110,7 +149,9 @@ function Login() {
 
             <p className="auth-switch">
               Don't have an account?{" "}
-              <Link to="/register">Create account</Link>
+              <Link to="/register">
+                Create account
+              </Link>
             </p>
           </div>
         </section>
