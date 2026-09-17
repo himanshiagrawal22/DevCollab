@@ -67,6 +67,7 @@ function ProjectWorkspace() {
   const [openComments, setOpenComments] = useState({});
   const [showCreateTask, setShowCreateTask] = useState(false);
   const [showTeam, setShowTeam] = useState(false);
+  const [isCreatingTask, setIsCreatingTask] = useState(false);
 
   // =========================
   // FETCH CURRENT USER
@@ -520,6 +521,10 @@ function ProjectWorkspace() {
   const handleCreateTask = async (e) => {
     e.preventDefault();
 
+    if (isCreatingTask) return;
+
+    setIsCreatingTask(true);
+
     try {
       await axios.post(
         `${API_URL}/api/projects/${projectId}/tasks`,
@@ -544,8 +549,10 @@ function ProjectWorkspace() {
     } catch (error) {
       alert(
         error.response?.data?.message ||
-        "Task creation failed"
+          "Task creation failed"
       );
+    } finally {
+      setIsCreatingTask(false);
     }
   };
 
@@ -628,6 +635,11 @@ function ProjectWorkspace() {
           withCredentials: true
         }
       );
+
+      // Refresh tasks immediately after a successful status update.
+      // This keeps the production UI correct even if the Socket.IO
+      // refresh event is delayed or unavailable.
+      await fetchTasks();
     } catch (error) {
       alert(
         error.response?.data?.message ||
@@ -1239,7 +1251,7 @@ function ProjectWorkspace() {
                 <label>Priority<select value={priority} onChange={(e) => setPriority(e.target.value)}><option value="LOW">Low</option><option value="MEDIUM">Medium</option><option value="HIGH">High</option></select></label>
                 <label>Assignee<select value={assignedTo} onChange={(e) => setAssignedTo(e.target.value)}><option value="">Unassigned</option>{members.map((member) => <option key={member._id} value={member.user?._id}>{member.user?.name}</option>)}</select></label>
               </div>
-              <div className="modal-actions"><button type="button" className="secondary-btn" onClick={() => setShowCreateTask(false)}>Cancel</button><button type="submit" className="primary-btn">Create Task</button></div>
+              <div className="modal-actions"><button type="button" className="secondary-btn" onClick={() => setShowCreateTask(false)}>Cancel</button><button type="submit" className="primary-btn" disabled={isCreatingTask}>{isCreatingTask ? "Creating..." : "Create Task"}</button></div>
             </form>
           </section>
         </div>
