@@ -9,6 +9,11 @@ function ProjectWorkspace() {
   const { projectId } = useParams();
   const navigate = useNavigate();
 
+  // Browser tab title
+  useEffect(() => {
+    document.title = "Project Workspace | DevCollab";
+  }, []);
+
   // =========================
   // MAIN DATA
   // =========================
@@ -549,7 +554,7 @@ function ProjectWorkspace() {
     } catch (error) {
       alert(
         error.response?.data?.message ||
-          "Task creation failed"
+        "Task creation failed"
       );
     } finally {
       setIsCreatingTask(false);
@@ -1187,7 +1192,7 @@ function ProjectWorkspace() {
                     <span className="member-role">{member.role}</span>
                     {member.role !== "OWNER" && canChangeRoles && (
                       <>
-                        <select value={roleChanges[member._id] || member.role} onChange={(e) => setRoleChanges({...roleChanges,[member._id]:e.target.value})}>
+                        <select value={roleChanges[member._id] || member.role} onChange={(e) => setRoleChanges({ ...roleChanges, [member._id]: e.target.value })}>
                           <option value="ADMIN">Admin</option><option value="MEMBER">Member</option><option value="VIEWER">Viewer</option>
                         </select>
                         <button className="small-btn" onClick={() => handleUpdateRole(member._id)}>Update</button>

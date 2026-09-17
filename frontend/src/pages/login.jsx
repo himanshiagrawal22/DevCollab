@@ -1,13 +1,42 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+} from "react-router-dom";
 import API_URL from "../services/api";
 
 function Login() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] =
+    useState("");
 
   const navigate = useNavigate();
+
+  // Login page should always stay in light mode
+  useEffect(() => {
+    document.documentElement.setAttribute(
+      "data-theme",
+      "light"
+    );
+
+    return () => {
+      const savedTheme =
+        localStorage.getItem(
+          "devcollab-theme"
+        ) || "light";
+
+      document.documentElement.setAttribute(
+        "data-theme",
+        savedTheme
+      );
+    };
+  }, []);
+
+  // Browser tab title
+  useEffect(() => {
+    document.title = "Login | DevCollab";
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -41,11 +70,15 @@ function Login() {
       <div className="auth-container">
         <section className="auth-brand-panel">
           <div className="auth-brand">
-            <div className="brand-logo">D</div>
+            <div className="brand-logo">
+              D
+            </div>
 
             <div>
               <h2>DevCollab</h2>
-              <span>Developer Workspace</span>
+              <span>
+                Developer Workspace
+              </span>
             </div>
           </div>
 
@@ -63,9 +96,9 @@ function Login() {
             </h1>
 
             <p>
-              Organize tasks, collaborate with your
-              team and keep every project update in
-              one place.
+              Organize tasks, collaborate
+              with your team and keep every
+              project update in one place.
             </p>
           </div>
 
@@ -96,7 +129,8 @@ function Login() {
               </h2>
 
               <p>
-                Continue working with your team.
+                Continue working with your
+                team.
               </p>
             </div>
 
@@ -114,16 +148,16 @@ function Login() {
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) =>
-                    setEmail(e.target.value)
+                    setEmail(
+                      e.target.value
+                    )
                   }
                   required
                 />
               </div>
 
               <div className="form-field">
-                <label>
-                  Password
-                </label>
+                <label>Password</label>
 
                 <input
                   type="password"

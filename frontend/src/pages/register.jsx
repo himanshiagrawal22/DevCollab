@@ -1,14 +1,43 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+} from "react-router-dom";
 import API_URL from "../services/api";
 
 function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] =
+    useState("");
 
   const navigate = useNavigate();
+
+  // Register page should always stay in light mode
+  useEffect(() => {
+    document.documentElement.setAttribute(
+      "data-theme",
+      "light"
+    );
+
+    return () => {
+      const savedTheme =
+        localStorage.getItem(
+          "devcollab-theme"
+        ) || "light";
+
+      document.documentElement.setAttribute(
+        "data-theme",
+        savedTheme
+      );
+    };
+  }, []);
+
+  // Browser tab title
+  useEffect(() => {
+    document.title = "Register | DevCollab";
+  }, []);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -40,11 +69,15 @@ function Register() {
       <div className="auth-container">
         <section className="auth-brand-panel">
           <div className="auth-brand">
-            <div className="brand-logo">D</div>
+            <div className="brand-logo">
+              D
+            </div>
 
             <div>
               <h2>DevCollab</h2>
-              <span>Developer Workspace</span>
+              <span>
+                Developer Workspace
+              </span>
             </div>
           </div>
 
@@ -56,18 +89,22 @@ function Register() {
             <h1>
               Turn ideas into
               <br />
-              <span>real projects.</span>
+              <span>
+                real projects.
+              </span>
             </h1>
 
             <p>
-              Create workspaces, manage tasks and
-              collaborate with developers in real time.
+              Create workspaces, manage
+              tasks and collaborate with
+              developers in real time.
             </p>
           </div>
 
           <div className="auth-features">
             <span>
-              ✓ Create collaborative projects
+              ✓ Create collaborative
+              projects
             </span>
 
             <span>
@@ -92,7 +129,8 @@ function Register() {
               </h2>
 
               <p>
-                Start collaborating with your team.
+                Start collaborating with
+                your team.
               </p>
             </div>
 
@@ -101,42 +139,54 @@ function Register() {
               onSubmit={handleRegister}
             >
               <div className="form-field">
-                <label>Full name</label>
+                <label>
+                  Full name
+                </label>
 
                 <input
                   type="text"
                   placeholder="Your name"
                   value={name}
                   onChange={(e) =>
-                    setName(e.target.value)
+                    setName(
+                      e.target.value
+                    )
                   }
                   required
                 />
               </div>
 
               <div className="form-field">
-                <label>Email address</label>
+                <label>
+                  Email address
+                </label>
 
                 <input
                   type="email"
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) =>
-                    setEmail(e.target.value)
+                    setEmail(
+                      e.target.value
+                    )
                   }
                   required
                 />
               </div>
 
               <div className="form-field">
-                <label>Password</label>
+                <label>
+                  Password
+                </label>
 
                 <input
                   type="password"
                   placeholder="Minimum 6 characters"
                   value={password}
                   onChange={(e) =>
-                    setPassword(e.target.value)
+                    setPassword(
+                      e.target.value
+                    )
                   }
                   required
                   minLength={6}

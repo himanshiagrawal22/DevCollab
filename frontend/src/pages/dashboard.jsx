@@ -34,6 +34,11 @@ function Dashboard() {
     }
   };
 
+  // Browser tab title
+  useEffect(() => {
+    document.title = "Dashboard | DevCollab";
+  }, []);
+
   useEffect(() => {
     fetchProjects();
   }, []);

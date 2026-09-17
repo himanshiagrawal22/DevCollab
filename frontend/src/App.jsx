@@ -10,40 +10,58 @@ import Dashboard from "./pages/dashboard";
 import ProjectWorkspace from "./pages/projectWorkspace";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
+import "./App.css";
+
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
+      <div className="app-container">
 
-        <Route
-          path="/"
-          element={<Login />}
-        />
+        <main className="app-content">
+          <Routes>
 
-        <Route
-          path="/register"
-          element={<Register />}
-        />
+            <Route
+              path="/"
+              element={<Login />}
+            />
 
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
+            <Route
+              path="/register"
+              element={<Register />}
+            />
 
-        <Route
-          path="/projects/:projectId"
-          element={
-            <ProtectedRoute>
-              <ProjectWorkspace />
-            </ProtectedRoute>
-          }
-        />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
 
-      </Routes>
+            <Route
+              path="/projects/:projectId"
+              element={
+                <ProtectedRoute>
+                  <ProjectWorkspace />
+                </ProtectedRoute>
+              }
+            />
+
+          </Routes>
+        </main>
+
+        <footer className="devcollab-footer">
+          <p>
+            Developed by{" "}
+            <span className="footer-name">
+              Himanshi Agrawal
+            </span>
+            {" "} | All Rights Reserved © 2026
+          </p>
+        </footer>
+
+      </div>
     </BrowserRouter>
   );
 }
