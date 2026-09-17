@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import socket from "../services/socket.js";
 import ThemeToggle from "../components/ThemeToggle.jsx";
+import API_URL from "../services/api.js";
 
 function ProjectWorkspace() {
   const { projectId } = useParams();
@@ -74,7 +75,7 @@ function ProjectWorkspace() {
   const fetchCurrentUser = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/auth/me",
+        `${API_URL}/api/auth/me`,
         { withCredentials: true }
       );
 
@@ -91,7 +92,7 @@ function ProjectWorkspace() {
   const fetchTasks = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/projects/${projectId}/tasks`,
+        `${API_URL}/api/projects/${projectId}/tasks`,
         {
           withCredentials: true
         }
@@ -115,7 +116,7 @@ function ProjectWorkspace() {
   const fetchMembers = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/projects/${projectId}/members`,
+        `${API_URL}/api/projects/${projectId}/members`,
         {
           withCredentials: true
         }
@@ -147,7 +148,7 @@ function ProjectWorkspace() {
   const fetchComments = async (taskId) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/projects/${projectId}/tasks/${taskId}/comments`,
+        `${API_URL}/api/projects/${projectId}/tasks/${taskId}/comments`,
         {
           withCredentials: true
         }
@@ -174,7 +175,7 @@ function ProjectWorkspace() {
   const fetchNotifications = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/notifications",
+        `${API_URL}/api/notifications`,
         { withCredentials: true }
       );
 
@@ -191,7 +192,7 @@ function ProjectWorkspace() {
   const fetchActivities = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/projects/${projectId}/activities`,
+        `${API_URL}/api/projects/${projectId}/activities`,
         {
           withCredentials: true
         }
@@ -206,7 +207,7 @@ function ProjectWorkspace() {
   const handleMarkNotificationAsRead = async (notificationId) => {
     try {
       await axios.patch(
-        `http://localhost:5000/api/notifications/${notificationId}/read`,
+        `${API_URL}/api/notifications/${notificationId}/read`,
         {},
         { withCredentials: true }
       );
@@ -220,7 +221,7 @@ function ProjectWorkspace() {
   const handleMarkAllNotificationsAsRead = async () => {
     try {
       await axios.patch(
-        "http://localhost:5000/api/notifications/read-all",
+        `${API_URL}/api/notifications/read-all`,
         {},
         { withCredentials: true }
       );
@@ -428,7 +429,7 @@ function ProjectWorkspace() {
 
     try {
       await axios.post(
-        `http://localhost:5000/api/projects/${projectId}/members`,
+        `${API_URL}/api/projects/${projectId}/members`,
         {
           email: memberEmail,
           role: memberRole
@@ -459,7 +460,7 @@ function ProjectWorkspace() {
   const handleUpdateRole = async (memberId) => {
     try {
       await axios.patch(
-        `http://localhost:5000/api/projects/${projectId}/members/${memberId}/role`,
+        `${API_URL}/api/projects/${projectId}/members/${memberId}/role`,
         {
           role: roleChanges[memberId]
         },
@@ -494,7 +495,7 @@ function ProjectWorkspace() {
 
     try {
       await axios.delete(
-        `http://localhost:5000/api/projects/${projectId}/members/${memberId}`,
+        `${API_URL}/api/projects/${projectId}/members/${memberId}`,
         {
           withCredentials: true
         }
@@ -521,7 +522,7 @@ function ProjectWorkspace() {
 
     try {
       await axios.post(
-        `http://localhost:5000/api/projects/${projectId}/tasks`,
+        `${API_URL}/api/projects/${projectId}/tasks`,
         {
           title,
           description,
@@ -586,7 +587,7 @@ function ProjectWorkspace() {
 
     try {
       await axios.patch(
-        `http://localhost:5000/api/projects/${projectId}/tasks/${taskId}`,
+        `${API_URL}/api/projects/${projectId}/tasks/${taskId}`,
         {
           title: editTitle,
           description: editDescription,
@@ -619,7 +620,7 @@ function ProjectWorkspace() {
   ) => {
     try {
       await axios.patch(
-        `http://localhost:5000/api/projects/${projectId}/tasks/${taskId}/status`,
+        `${API_URL}/api/projects/${projectId}/tasks/${taskId}/status`,
         {
           status
         },
@@ -648,7 +649,7 @@ function ProjectWorkspace() {
 
     try {
       await axios.delete(
-        `http://localhost:5000/api/projects/${projectId}/tasks/${taskId}`,
+        `${API_URL}/api/projects/${projectId}/tasks/${taskId}`,
         {
           withCredentials: true
         }
@@ -695,7 +696,7 @@ function ProjectWorkspace() {
 
     try {
       await axios.post(
-        `http://localhost:5000/api/projects/${projectId}/tasks/${taskId}/comments`,
+        `${API_URL}/api/projects/${projectId}/tasks/${taskId}/comments`,
         {
           text
         },
@@ -732,7 +733,7 @@ function ProjectWorkspace() {
 
     try {
       await axios.delete(
-        `http://localhost:5000/api/projects/${projectId}/tasks/${taskId}/comments/${commentId}`,
+        `${API_URL}/api/projects/${projectId}/tasks/${taskId}/comments/${commentId}`,
         {
           withCredentials: true
         }
